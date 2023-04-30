@@ -1,15 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
 
 function Login(props) {
 
-    const [email, setEmail] = React.useState("");
-    const [password, setpassword] = React.useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     function handleEmail(e) {
         setEmail(e.target.value);
     }
     function handlePassword(e) {
-        setpassword(e.target.value);
+        setPassword(e.target.value);
     }
 
     function handleSubmit(e) {

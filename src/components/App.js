@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
@@ -18,24 +18,23 @@ import InfoToolTip from './InfoTooltip';
 
 
 function App() {
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false);
-  const [isConfirmDeletePopupOpen, setIsConfirmDeletePopupOpen] = React.useState(false);
-  const [isInfoToolTipPopupOpen, setInfoToolTipPopupOpen] = React.useState(false);
-  const [renderLoadingOn, setIsRenderLoadingOn] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState({});
-  const [cards, setCards] = React.useState([]);
-  const [currentUser, setCurrentUser] = React.useState(currentUserInfo);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [email, setEmail] = React.useState('');
-  const [isSuccess, setIsSuccess] = React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
+  const [isConfirmDeletePopupOpen, setIsConfirmDeletePopupOpen] = useState(false);
+  const [isInfoToolTipPopupOpen, setInfoToolTipPopupOpen] = useState(false);
+  const [renderLoadingOn, setIsRenderLoadingOn] = useState(false);
+  const [selectedCard, setSelectedCard] = useState({});
+  const [cards, setCards] = useState([]);
+  const [currentUser, setCurrentUser] = useState(currentUserInfo);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const jwt = localStorage.getItem('jwt');
-
     if (jwt) {
       auth
         .checkToken(jwt)
@@ -86,6 +85,8 @@ function App() {
         } else if (err.status === 401) {
           console.log('401 - пользователь с email не найден');
         }
+        setInfoToolTipPopupOpen(true);
+        setIsSuccess(false);
       });
   }
 
@@ -95,21 +96,25 @@ function App() {
     navigate('/sign-in');
   }
 
-  React.useEffect(() => {
-    api.getMyInfo()
-      .then((data) => {
-        setCurrentUser(data)
-      })
-      .catch((err) => { console.log(err) })
-  }, []);
+  useEffect(() => {
+    if (isLoggedIn) {
+      api.getMyInfo()
+        .then((data) => {
+          setCurrentUser(data)
+        })
+        .catch((err) => { console.log(err) })
+    }
+  }, [isLoggedIn]);
 
-  React.useEffect(() => {
-    api.getServerCards()
-      .then((cards) => {
-        setCards(cards);
-      })
-      .catch((err) => { console.log(err) })
-  }, [])
+  useEffect(() => {
+    if (isLoggedIn) {
+      api.getServerCards()
+        .then((cards) => {
+          setCards(cards);
+        })
+        .catch((err) => { console.log(err) })
+    }
+  }, [isLoggedIn])
 
   function renderLoading() {
     setIsRenderLoadingOn((renderLoadingOn) => !renderLoadingOn);
